@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioSense | AI Monitoring</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+</head>
+<body>
+<div class="dashboard-container">
+<header class="topbar">
+<div class="brand-lockup"><div class="brand-mark" aria-hidden="true">+</div><div><p class="eyebrow">CARDIOSENSE / RESEARCH CONSOLE</p><h1>AI Cardiovascular Monitoring</h1><p class="brand-subtitle">Non-invasive physiological signal intelligence</p></div></div>
+<div class="header-actions"><div class="status-indicator" aria-live="polite"><span class="dot"></span><span class="status-copy">System Online</span></div><div class="session-chip"><span class="session-dot"></span> Live session</div><button class="icon-button" type="button" aria-label="Dashboard settings" title="Dashboard settings">&#9881;</button></div>
+</header>
+<main class="grid-container">
+<section class="overview-strip"><div><p class="eyebrow accent-text">LIVE MONITORING</p><h2>Live Cardiovascular Monitoring</h2><p class="overview-copy">Multi-sensor telemetry is being streamed and analyzed in real time.</p></div><div class="overview-meta"><span class="meta-label">SESSION STATUS</span><strong>Collecting signals</strong><span class="last-update">Last update <time id="lastUpdate">--:--:--</time></span></div></section>
+
+<section class="card vitals-card"><div class="section-heading"><div><p class="eyebrow">PRIMARY TELEMETRY</p><h2>Vitals overview</h2></div><span class="live-badge"><span class="dot"></span> LIVE</span></div>
+<div class="vitals-grid">
+<div class="vital-box"><div class="vital-icon heart-icon" aria-hidden="true">+</div><div class="vital-title">Heart Rate</div><div class="vital-value"><span id="hrValue">--</span> <span class="unit">BPM</span></div><div class="vital-status"><span class="status-bar good"></span> Live telemetry</div></div>
+<div class="vital-box"><div class="vital-icon oxygen-icon" aria-hidden="true">O2</div><div class="vital-title">SpO2</div><div class="vital-value"><span id="spo2Value">--</span> <span class="unit">%</span></div><div class="vital-status"><span class="status-bar good"></span> Live telemetry</div></div>
+<div class="vital-box secondary-vital"><div class="vital-icon wave-icon" aria-hidden="true">~</div><div class="vital-title">HRV / RMSSD</div><div class="vital-value"><span id="feat-rmssd-vital">--</span> <span class="unit">MS</span></div><div class="vital-status"><span class="status-bar info"></span> Final assessment</div></div>
+<div class="vital-box secondary-vital"><div class="vital-icon signal-icon" aria-hidden="true">:::</div><div class="vital-title">Signal quality</div><div class="vital-value quality-value">--</div><div class="vital-status"><span class="status-bar pending"></span> Telemetry quality</div></div>
+</div></section>
+
+<section class="card prediction-card"><div class="section-heading"><div><p class="eyebrow">FINAL ASSESSMENT</p><h2>Cardiovascular Health</h2></div><span class="model-chip">AI / ML</span></div>
+<div class="prediction-content">
+<div class="confidence-ring" id="confidenceRing" style="--confidence: 0deg" aria-label="Overall health score"><div class="confidence-ring-inner"><strong id="confidenceValue">--/100</strong><span>health score</span></div></div>
+<div class="prediction-kicker">OVERALL CARDIOVASCULAR HEALTH</div>
+<div class="prediction-status" id="mlStatus">Awaiting final assessment</div>
+<div class="prediction-confidence">FINAL AVERAGED MEASUREMENTS</div>
+<div class="actual-metrics-grid">
+<div>Heart Rate <strong id="hrHealthScore">-- BPM</strong></div>
+<div>SpO2 <strong id="spo2HealthScore">-- %</strong></div>
+<div>HRV / RMSSD <strong id="hrvHealthScore">-- ms</strong></div>
+<div>Signal Quality <strong id="signalHealthScore">-- %</strong></div>
+</div>
+<p class="prediction-note">The Health Score combines the final multi-sensor measurements into an engineering health indicator. Prototype/research use only; not a medical diagnosis.</p>
+</div></section>
+
+<section class="card waveform-card ecg-card"><div class="chart-heading"><div><p class="eyebrow accent-text">ELECTRICAL ACTIVITY</p><h2>Live ECG</h2></div><div class="chart-status"><span class="status-bar good"></span> Real-time signal</div></div><div class="chart-meta"><span>RAW ECG WAVEFORM</span><span id="ecgSample">Streaming / 100 samples</span></div><div class="chart-container"><canvas id="ecgChart" aria-label="Live ECG waveform"></canvas></div></section>
+<section class="card waveform-card ppg-card"><div class="chart-heading"><div><p class="eyebrow blue-text">OPTICAL ACTIVITY</p><h2>Live PPG</h2></div><div class="chart-status"><span class="status-bar info"></span> IR channel</div></div><div class="chart-meta"><span class="legend-item"><i class="legend-swatch ppg-swatch"></i> PPG IR</span><span>RAW SIGNAL</span></div><div class="chart-container"><canvas id="ppgChart" aria-label="Live PPG infrared waveform"></canvas></div></section>
+<section class="card signal-card"><div class="section-heading"><div><p class="eyebrow">TELEMETRY HEALTH</p><h2>Signal quality</h2></div><span class="tiny-live"><span class="dot"></span> STREAMING</span></div><div class="quality-list"><div><span>ECG channel</span><strong>Connected</strong><span class="quality-track"><i class="quality-fill cyan-fill"></i></span></div><div><span>PPG IR channel</span><strong>Connected</strong><span class="quality-track"><i class="quality-fill blue-fill"></i></span></div><div><span>Data stream</span><strong>Live</strong><span class="quality-track"><i class="quality-fill teal-fill"></i></span></div></div></section>
+<section class="card features-card"><div class="section-heading"><div><p class="eyebrow">DERIVED FEATURES</p><h2>Final feature window</h2></div><span class="model-chip">30 SEC</span></div><table class="features-table"><tbody><tr><td>RR interval <small>mean</small></td><td id="feat-rr">-- ms</td></tr><tr><td>SDNN <small>variability</small></td><td id="feat-sdnn">-- ms</td></tr><tr><td>RMSSD <small>short-term HRV</small></td><td id="feat-rmssd">-- ms</td></tr><tr><td>PPG peak-to-peak <small>optical amplitude</small></td><td id="feat-p2p">--</td></tr></tbody></table></section>
+</main><footer><span>AI-Driven Cardiovascular Monitoring</span><span>Prototype / Research Dashboard</span></footer></div>
+<script src="js/app.js"></script>
+</body>
+</html>
